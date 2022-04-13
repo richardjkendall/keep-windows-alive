@@ -21,7 +21,7 @@ namespace MouseJiggler
 
         public static void ResetTimer()
         {
-            EXECUTION_STATE r = SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+            EXECUTION_STATE r = SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED | EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_CONTINUOUS);
             Console.WriteLine("Response from SetThreadExecutionState call {0:S}", r.ToString());
         }
     
