@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using CommandLine;
 
@@ -25,7 +26,8 @@ namespace MouseJiggler
             int WAIT_TIME = 0;
             int IDLE_TIMEOUT = 0;
 
-            Console.WriteLine("keep-windows-alive v0.1");
+            string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Console.WriteLine($"keep-windows-alive {version}");
             Console.WriteLine("(C) 2022 Richard Kendall.");
             Console.WriteLine("");
 
