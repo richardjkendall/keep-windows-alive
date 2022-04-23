@@ -25,16 +25,22 @@ namespace MouseJiggler
             int WAIT_TIME = 0;
             int IDLE_TIMEOUT = 0;
 
+            Console.WriteLine("keep-windows-alive v0.1");
+            Console.WriteLine("(C) 2022 Richard Kendall.");
+            Console.WriteLine("");
+
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(o =>
                 {
                     WAIT_TIME = o.WaitTime * 1000;
                     IDLE_TIMEOUT = o.IdleTimeout * 1000;
+                })
+                .WithNotParsed(e =>
+                {
+                    Console.WriteLine("Exit due to command line error");
+                    Environment.Exit(1);
                 });
 
-            Console.WriteLine("keep-windows-alive v0.1");
-            Console.WriteLine("(C) 2022 Richard Kendall.");
-            Console.WriteLine("");
             Console.WriteLine($"Wait time between loops: {WAIT_TIME / 1000} seconds");
             Console.WriteLine($"Idle time before reset happens: {IDLE_TIMEOUT / 1000} seconds");
             Console.WriteLine("");
