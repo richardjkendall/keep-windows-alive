@@ -1,15 +1,43 @@
 ﻿using System;
 using System.Threading;
+using CommandLine;
 
 namespace MouseJiggler
 {
     internal class Program
     {
-        public const int WAIT_TIME = 60000; //900000
-        public const int IDLE_TIMEOUT = 30000;
 
+        public const int DEFAULT_WAIT_TIME = 60;
+        public const int DEFAULT_IDLE_TIMEOUT = 30;
+
+        public class Options
+        {
+            [Option('w', "waittime", Required = false, HelpText = "How long should the tool wait before it checks to see if the computer is idle", Default = DEFAULT_WAIT_TIME)]
+            public int WaitTime { get; set; } 
+
+            [Option('i', "idletime", Required = false, HelpText = "How long should the system be idle for before the idle time is reset", Default = DEFAULT_IDLE_TIMEOUT)]
+            public int IdleTimeout { get; set; }
+        }
+
+        
         static void Main(string[] args)
         {
+            int WAIT_TIME = 0;
+            int IDLE_TIMEOUT = 0;
+
+            Parser.Default.ParseArguments<Options>(args)
+                .WithParsed<Options>(o =>
+                {
+                    WAIT_TIME = o.WaitTime * 1000;
+                    IDLE_TIMEOUT = o.IdleTimeout * 1000;
+                });
+
+            Console.WriteLine("keep-windows-alive v0.1");
+            Console.WriteLine("(C) 2022 Richard Kendall.");
+            Console.WriteLine("");
+            Console.WriteLine($"Wait time between loops: {WAIT_TIME / 1000} seconds");
+            Console.WriteLine($"Idle time before reset happens: {IDLE_TIMEOUT / 1000} seconds");
+            Console.WriteLine("");
 
             uint timestamp = (uint)Environment.TickCount;
 
@@ -20,16 +48,17 @@ namespace MouseJiggler
                 {
                     timestamp = (uint)Environment.TickCount;
                     uint idle = UserInput.IdleTime();
-                    Console.WriteLine("Idle time is {0:D}", idle);
+                    Console.WriteLine($"Idle time is {idle / 1000} seconds");
                     if (idle > IDLE_TIMEOUT)
                     {
-                        Console.WriteLine("Been idle for more than threshold {0:D}", IDLE_TIMEOUT/1000);
+                        Console.WriteLine($"\tThe idle time is beyond the expected threshold, resetting.");
                         InteractWithSystem.ResetTimer();
                     }
                 }
 
                 // wait for loop to go round again
-                Thread.Sleep(5000);
+                // just wait for a second
+                Thread.Sleep(1000);
             }
         }
     }
